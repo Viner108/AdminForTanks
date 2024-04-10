@@ -1,10 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <meta charset="UTF-8">
+    <title>Административная панель</title>
 </head>
 <body>
-$END$
+<textarea id="adminMessage"></textarea>
+<button onclick="sendMessage()">Отправить сообщение</button>
+<div id="receivedData"></div>
+
+<script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script>
+<script>
+    // Сокет для отправки сообщений
+    const messageSocket = io('http://localhost:8001');
+    // Сокет для приема данных
+    const dataSocket = io('http://localhost:8002');
+
+    // function sendMessage() {
+    //     // messageSocket.emit();
+    // }
+
+    // dataSocket.on('dataForAdmin', (data) => {
+    //     // document.getElementById('receivedData').innerText = data;
+    // });
+</script>
 </body>
 </html>
