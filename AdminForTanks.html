@@ -2,27 +2,47 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Административная панель</title>
+    <title>WebSocket Client</title>
 </head>
 <body>
-<textarea id="adminMessage"></textarea>
-<button onclick="sendMessage()">Отправить сообщение</button>
-<div id="receivedData"></div>
+    <input type="text" id="messageInput">
+    <button onclick="sendMessage()">Send</button>
+    <button onclick="clearMessages()">Clear Messages</button>
+    <div id="messageContainer"></div>
 
-<script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script>
-<script>
-    // Сокет для отправки сообщений
-    const messageSocket = io('http://localhost:8001');
-    // Сокет для приема данных
-    const dataSocket = io('http://localhost:8002');
+    <script>
+        const socket = new WebSocket('ws://localhost:8080'); // Подключаемся к серверу
 
-    // function sendMessage() {
-    //     // messageSocket.emit();
-    // }
+        socket.onopen = function() {
+            console.log('Connected to server');
+        };
 
-    // dataSocket.on('dataForAdmin', (data) => {
-    //     // document.getElementById('receivedData').innerText = data;
-    // });
-</script>
+        socket.onmessage = function(event) {
+          const messageContainer = document.getElementById('messageContainer');
+            const message = document.createElement('div');
+            message.textContent = event.data;
+              message.addEventListener('click', function() {
+                // Отправляем сообщение на сервер при клике на сообщение
+                const deleteMessage = 'delete ' + event.data;
+                socket.send(deleteMessage);
+            });
+            messageContainer.appendChild(message);
+        };
+
+        socket.onclose = function() {
+            console.log('Disconnected from server');
+        };
+
+        function sendMessage() {
+            const messageInput = document.getElementById('messageInput');
+            const message = messageInput.value;
+            socket.send(message); // Отправляем сообщение на сервер
+            messageInput.value = ''; // Очищаем поле ввода
+        }
+         function clearMessages() {
+            const messageContainer = document.getElementById('messageContainer');
+            messageContainer.innerHTML = ''; // Очищаем контейнер сообщений
+        }
+    </script>
 </body>
 </html>
